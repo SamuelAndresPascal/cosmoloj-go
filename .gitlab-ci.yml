@@ -1,4 +1,4 @@
-defaut:
+default:
   before_script:
     - export PATH=$PATH:$GO_HOME/bin
     - go version
