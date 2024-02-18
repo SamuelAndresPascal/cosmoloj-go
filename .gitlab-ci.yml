@@ -1,4 +1,4 @@
-default:
+defaut:
   before_script:
     - export PATH=$PATH:$GO_HOME/bin
     - go version
@@ -6,6 +6,7 @@ default:
 
 stages:
   - build
+  - test
   
 include:
   - local: 'unit-simple/.gitlab-ci.yml'

@@ -3,5 +3,11 @@ build:unit-simple:
   script:
     - cd unit-simple
     - go mod tidy
-    - go run unit-simple.go 
+    - go run unit-simple.go
+    
+test:unit-simple:
+  stage: test
+  script:
+    - cd unit-simple
+    - go test 
 
