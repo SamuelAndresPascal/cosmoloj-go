@@ -1,0 +1,13 @@
+defaut:
+  before_script:
+    - export PATH=$PATH:$GO_HOME/bin
+    - go version
+    - pwd
+
+stages:
+  - build
+  
+include:
+  - local: 'unit-simple/.gitlab-ci.yml'
+  - local: 'learning/.gitlab-ci.yml'
+

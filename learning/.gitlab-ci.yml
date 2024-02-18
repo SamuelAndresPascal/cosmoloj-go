@@ -1,0 +1,8 @@
+build:learning:
+  stage: build
+  script:
+    - cd learning
+    - go mod tidy
+    - go run hello.go
+    - go run hola.go 
+
