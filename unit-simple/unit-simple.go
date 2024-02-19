@@ -15,45 +15,45 @@ type UnitConverter interface {
   Concatenate(converter UnitConverter) UnitConverter
 }
 
-type Factorer interface {
-  Dim() Uniter
+type Factor interface {
+  Dim() Unit
   Numerator() int32
   Denominator() int32
   Power() float64
 }
 
-type Uniter interface {
-  Factorer
-  GetConverterTo(target Uniter) UnitConverter
+type Unit interface {
+  Factor
+  GetConverterTo(target Unit) UnitConverter
   ToBase() UnitConverter
-  Shift(value float64) Uniter
-  ScaleMultiply(value float64) Uniter
-  ScaleDivide(value float64) Uniter
-  Factor(numerator int32, denominator int32) Factorer
+  Shift(value float64) Unit
+  ScaleMultiply(value float64) Unit
+  ScaleDivide(value float64) Unit
+  Factor(numerator int32, denominator int32) Factor
 }
 
-type FundamentalUniter interface {
-  Uniter
+type FundamentalUnit interface {
+  Unit
 }
 
-type TransformedUniter interface {
-  Uniter
+type TransformedUnit interface {
+  Unit
   ToReference() UnitConverter
-  Reference() Uniter
+  Reference() Unit
 }
 
-type DerivedUniter interface {
-  Uniter
+type DerivedUnit interface {
+  Unit
 }
 
-type UnitConvert struct {
+type UnitConverterImpl struct {
   scale float64
   offset float64
   inverse UnitConverter
 }
 
 func _NewUnitConverter(scale float64, offset float64, inverse UnitConverter) UnitConverter {
-  result := new(UnitConvert)
+  result := new(UnitConverterImpl)
   result.scale = scale
   result.offset = offset
   if inverse == nil {
@@ -68,132 +68,132 @@ func NewUnitConverter(scale float64, offset float64) UnitConverter {
   return _NewUnitConverter(scale, offset, nil)
 }
 
-type FactorStruct struct {
-  unit Uniter
+type FactorImpl struct {
+  unit Unit
   numerator int32
   denominator int32
 }
 
-func NewFactor(unit Uniter, numerator int32, denominator int32) Factorer {
-  return &FactorStruct{unit, numerator, denominator}
+func NewFactor(unit Unit, numerator int32, denominator int32) Factor {
+  return &FactorImpl{unit, numerator, denominator}
 }
 
-type Unit struct {
-  FactorStruct
-  this Uniter
+type UnitImpl struct {
+  FactorImpl
+  this Unit
 }
 
-type FundamentalUnit struct {
-  Unit
+type FundamentalUnitImpl struct {
+  UnitImpl
 }
 
-func NewFundamentalUniter() FundamentalUniter {
-  var result = new(FundamentalUnit)
+func NewFundamentalUnit() FundamentalUnit {
+  var result = new(FundamentalUnitImpl)
   result.this = result
   return result
 }
 
-type TransformedUnit struct {
-  Unit
+type TransformedUnitImpl struct {
+  UnitImpl
   toReference UnitConverter
-  reference Uniter
+  reference Unit
 }
 
-func NewTransformedUniter(toReference UnitConverter, reference Uniter) TransformedUniter {
-  var result = new(TransformedUnit)
+func NewTransformedUnit(toReference UnitConverter, reference Unit) TransformedUnit {
+  var result = new(TransformedUnitImpl)
   result.toReference = toReference
   result.this = result
   result.reference = reference
   return result
 }
 
-type DerivedUnit struct {
-  Unit
+type DerivedUnitImpl struct {
+  UnitImpl
 }
 
-func (x *UnitConvert) Scale() float64 {
+func (x *UnitConverterImpl) Scale() float64 {
   return x.scale
 }
 
-func (x *UnitConvert) Offset() float64 {
+func (x *UnitConverterImpl) Offset() float64 {
   return x.offset
 }
 
-func (x *UnitConvert) Inverse() UnitConverter {
+func (x *UnitConverterImpl) Inverse() UnitConverter {
   return x.inverse
 }
 
-func (x *UnitConvert) Linear() UnitConverter {
+func (x *UnitConverterImpl) Linear() UnitConverter {
   if x.offset == 0 {
     return x
   }
   return NewUnitConverter(x.scale, 0)
 }
 
-func (x *UnitConvert) LinearPow(power float64) UnitConverter {
+func (x *UnitConverterImpl) LinearPow(power float64) UnitConverter {
   if x.offset == 0 && power == 1 {
     return x
   }
   return NewUnitConverter(math.Pow(x.scale, power), 0)
 }
 
-func (x *UnitConvert) Convert(value float64) float64 {
+func (x *UnitConverterImpl) Convert(value float64) float64 {
   return value * x.scale + x.offset
 }
 
-func (x *UnitConvert) Concatenate(converter UnitConverter) UnitConverter {
+func (x *UnitConverterImpl) Concatenate(converter UnitConverter) UnitConverter {
   return NewUnitConverter(converter.Scale() * x.Scale(), x.Convert(converter.Offset()))
 }
 
-func (x *FactorStruct) Dim() Uniter {
+func (x *FactorImpl) Dim() Unit {
   return x.unit
 }
 
-func (x *FactorStruct) Numerator() int32 {
+func (x *FactorImpl) Numerator() int32 {
   return x.numerator
 }
 
-func (x *FactorStruct) Denominator() int32 {
+func (x *FactorImpl) Denominator() int32 {
   return x.denominator
 }
 
-func (x *FactorStruct) Power() float64 {
+func (x *FactorImpl) Power() float64 {
   return float64(x.numerator) / float64(x.denominator)
 }
 
-func (x *Unit) GetConverterTo(target Uniter) UnitConverter {
+func (x *UnitImpl) GetConverterTo(target Unit) UnitConverter {
   return target.ToBase().Inverse().Concatenate(x.this.ToBase())
 }
 
-func (x *Unit) Shift(value float64) Uniter {
-  return NewTransformedUniter(NewUnitConverter(1, value), x.this)
+func (x *UnitImpl) Shift(value float64) Unit {
+  return NewTransformedUnit(NewUnitConverter(1, value), x.this)
 }
 
-func (x *Unit) ScaleMultiply(value float64) Uniter {
-  return NewTransformedUniter(NewUnitConverter(value, 0), x.this)
+func (x *UnitImpl) ScaleMultiply(value float64) Unit {
+  return NewTransformedUnit(NewUnitConverter(value, 0), x.this)
 }
 
-func (x *Unit) ScaleDivide(value float64) Uniter {
+func (x *UnitImpl) ScaleDivide(value float64) Unit {
   return x.ScaleMultiply(1 / value)
 }
 
-func (x *Unit) Factor(numerator int32, denominator int32) Factorer {
+func (x *UnitImpl) Factor(numerator int32, denominator int32) Factor {
   return NewFactor(x.this, numerator, denominator)
 }
 
-func (x *FundamentalUnit) ToBase() UnitConverter {
+func (x *FundamentalUnitImpl) ToBase() UnitConverter {
   return NewUnitConverter(1, 0)
 }
 
-func (x *TransformedUnit) ToBase() UnitConverter {
+func (x *TransformedUnitImpl) ToBase() UnitConverter {
   return x.Reference().ToBase().Concatenate(x.ToReference())
 }
 
-func (x *TransformedUnit) ToReference() UnitConverter {
+func (x *TransformedUnitImpl) ToReference() UnitConverter {
   return x.toReference
 }
 
-func (x *TransformedUnit) Reference() Uniter {
+func (x *TransformedUnitImpl) Reference() Unit {
   return x.reference
 }
   

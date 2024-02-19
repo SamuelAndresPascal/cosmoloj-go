@@ -6,7 +6,7 @@ import (
 )
 
 func TestTransformed(t *testing.T) {
-    var m = NewFundamentalUniter()
+    var m = NewFundamentalUnit()
     var km = m.ScaleMultiply(1000)
     var cm = m.ScaleDivide(100)
     var cmToKm = cm.GetConverterTo(km)
