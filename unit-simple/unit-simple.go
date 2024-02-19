@@ -48,6 +48,23 @@ type DerivedUniter interface {
 type UnitConvert struct {
   scale float64
   offset float64
+  inverse UnitConverter
+}
+
+func _NewUnitConverter(scale float64, offset float64, inverse UnitConverter) UnitConverter {
+  result := new(UnitConvert)
+  result.scale = scale
+  result.offset = offset
+  if inverse == nil {
+    result.inverse = _NewUnitConverter(1 / scale, -offset / scale, result)
+  } else {
+    result.inverse = inverse
+  }
+  return result
+}
+
+func NewUnitConverter(scale float64, offset float64) UnitConverter {
+  return _NewUnitConverter(scale, offset, nil)
 }
 
 type AbstractUnit struct {
@@ -77,29 +94,35 @@ func (x UnitConvert) Offset() float64 {
   return x.offset
 }
 
+func (x UnitConvert) Inverse() UnitConverter {
+  return x.inverse
+}
+
+func (x UnitConvert) Linear() UnitConverter {
+  if x.offset == 0 {
+    return x
+  }
+  return NewUnitConverter(x.scale, 0)
+}
+
+func (x UnitConvert) LinearPow(power float64) UnitConverter {
+  if x.offset == 0 && power == 1 {
+    return x
+  }
+  return NewUnitConverter(math.Pow(x.scale, power), 0)
+}
+
 func (x UnitConvert) Convert(value float64) float64 {
   return value * x.scale + x.offset
 }
 
-func (x UnitConvert) Linear() UnitConverter {
-  return UnitConvert{x.scale, 0}
-}
-
-func (x UnitConvert) LinearPow(power float64) UnitConverter {
-  return UnitConvert{math.Pow(x.scale, power), 0}
-}
-
-func (x UnitConvert) Inverse() UnitConverter {
-  return x
-}
-
-func (x UnitConvert) Concatenate(then UnitConverter) UnitConverter {
-  return x
+func (x UnitConvert) Concatenate(converter UnitConverter) UnitConverter {
+  return NewUnitConverter(converter.Scale() * x.Scale(), x.Convert(converter.Offset()))
 }
 
 
 func main() {
-  c := UnitConvert{1, 2}
+  var c UnitConverter = NewUnitConverter(1, 2)
 
   fmt.Println(c)
   fmt.Println(c.Scale())
