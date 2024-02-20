@@ -20,9 +20,9 @@ Utilisation des unités dérivées :
 ```go
 var m Unit = NewFundamentalUnit()
 var km Unit = m.ScaleMultiply(1000.)
-var km2 Unit = NewDerivedUnit([]Factor{km.Factor(2, 1)})
+var km2 Unit = NewDerivedUnit(km.Factor(2, 1))
 var cm Unit = m.ScaleDivide(100.)
-var cm2 Unit = NewDerivedUnit([]Factor{cm.Factor(2, 1)})
+var cm2 Unit = NewDerivedUnit(cm.Factor(2, 1))
 var km2ToCm2 UnitConverter = km2.GetConverterTo(cm2)
 
 km2ToCm2.Convert(3.) // 3e10
@@ -36,11 +36,11 @@ var m Unit = NewFundamentalUnit()
 var kg Unit = NewFundamentalUnit()
 var g Unit = kg.ScaleDivide(1000.)
 var ton Unit = kg.ScaleMultiply(1000.)
-var gPerM2 = NewDerivedUnit([]Factor{g, m.Factor(-2, 1)})
+var gPerM2 = NewDerivedUnit(g, m.Factor(-2, 1))
 var km = m.ScaleMultiply(1000.)
-var tonPerKm2 = NewDerivedUnit([]Factor{ton, km.Factor(-2, 1)})
+var tonPerKm2 = NewDerivedUnit(ton, km.Factor(-2, 1))
 var cm = m.ScaleDivide(100.)
-var tonPerCm2 = NewDerivedUnit([]Factor{ton, cm.Factor(-2, 1)})
+var tonPerCm2 = NewDerivedUnit(ton, cm.Factor(-2, 1))
 var gPerM2ToTonPerKm2 = gPerM2.GetConverterTo(tonPerKm2)
 var gPerM2ToTonPerCm2 = gPerM2.GetConverterTo(tonPerCm2)
 
@@ -66,8 +66,8 @@ kToC.Inverse().Convert(0.) // 273.15
 
 // en combinaison avec d'autres unites, les conversions d'unites de temperatures doivent devenir lineaires
 var m Unit = NewFundamentalUnit()
-var cPerM Unit = NewDerivedUnit([]Factor{c, m.Factor(-1, 1)})
-var kPerM Unit = NewDerivedUnit([]Factor{k, m.Factor(-1, 1)})
+var cPerM Unit = NewDerivedUnit(c, m.Factor(-1, 1))
+var kPerM Unit = NewDerivedUnit(k, m.Factor(-1, 1))
 var kPerMToCPerM UnitConverter = kPerM.GetConverterTo(cPerM)
 
 kPerMToCPerM.Convert(3.)) > 1e-10 // 3.
@@ -83,8 +83,8 @@ var km Unit = m.ScaleMultiply(1000.)
 var s Unit = NewFundamentalUnit()
 var h Unit = s.ScaleMultiply(3600.)
 
-var mPerS Unit = NewDerivedUnit([]Factor{m, s.Factor(-1, 1)})
-var kMPerH Unit = NewDerivedUnit([]Factor{km, h.Factor(-1, 1)})
+var mPerS Unit = NewDerivedUnit(m, s.Factor(-1, 1))
+var kMPerH Unit = NewDerivedUnit(km, h.Factor(-1, 1))
 
 var mPerSToKMPerH UnitConverter = mPerS.GetConverterTo(kMPerH)
 

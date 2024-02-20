@@ -119,7 +119,7 @@ type DerivedUnitImpl struct {
   definition []Factor
 }
 
-func NewDerivedUnit(definition []Factor) DerivedUnit {
+func NewDerivedUnit(definition ...Factor) DerivedUnit {
   var result = new(DerivedUnitImpl)
   result.this = result
   result.unit = result.this
