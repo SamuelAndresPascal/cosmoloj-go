@@ -1,0 +1,12 @@
+build:unit_simple:
+  stage: build
+  script:
+    - cd unit_simple
+    - go mod tidy
+    
+test:unit_simple:
+  stage: test
+  script:
+    - cd unit_simple
+    - go test 
+

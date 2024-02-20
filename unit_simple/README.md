@@ -6,6 +6,10 @@
 Utilisation des unités transformées :
 
 ```go
+import(
+  . "com.cosmoloj.go/unit_simple"
+)
+
 var m Unit = NewFundamentalUnit()
 var km Unit = m.ScaleMultiply(1000)
 var cm Unit = m.ScaleDivide(100)
@@ -18,6 +22,10 @@ cmToKm.Inverse().Convert(0.00003) // 3.
 Utilisation des unités dérivées :
 
 ```go
+import(
+  . "com.cosmoloj.go/unit_simple"
+)
+
 var m Unit = NewFundamentalUnit()
 var km Unit = m.ScaleMultiply(1000.)
 var km2 Unit = NewDerivedUnit(km.Factor(2))
@@ -32,8 +40,12 @@ km2ToCm2.Inverse().Convert(3e10) // 3.
 Utilisation des unités dérivées en combinant les dimensions :
 
 ```go
-var m Unit = NewFundamentalUnit()
-var kg Unit = NewFundamentalUnit()
+import(
+  . "com.cosmoloj.go/unit_simple"
+)
+
+var m su.Unit = NewFundamentalUnit()
+var kg su.Unit = NewFundamentalUnit()
 var g Unit = kg.ScaleDivide(1000.)
 var ton Unit = kg.ScaleMultiply(1000.)
 var gPerM2 = NewDerivedUnit(g, m.Factor(-2))
@@ -57,6 +69,10 @@ gPerM2ToTonPerCm2.Inverse().Convert(3e-10) // 3.
 Utilisation des températures (conversions affines et linéaires) :
 
 ```go
+import(
+  . "com.cosmoloj.go/unit_simple"
+)
+
 var k Unit = NewFundamentalUnit()
 var c Unit = k.Shift(273.15)
 var kToC UnitConverter = k.GetConverterTo(c)
@@ -77,6 +93,10 @@ kPerMToCPerM.Inverse().Convert(3.) // 3.
 Utilisation des conversions non décimales :
 
 ```go
+import(
+  . "com.cosmoloj.go/unit_simple"
+)
+
 var m Unit = NewFundamentalUnit()
 var km Unit = m.ScaleMultiply(1000.)
 
