@@ -2,11 +2,14 @@ package main
 
 import (
 "fmt"
-su "com.cosmoloj.go/unit_simple"
+. "com.cosmoloj.go/unit_simple"
 )
 
 func main() {
-  var c su.UnitConverter = su.NewUnitConverter(1, 2)
+  var i UnitConverter = Identity()
+  fmt.Println(i)
+  fmt.Println(i.Inverse())
+  var c UnitConverter = NewUnitConverter(1, 2)
 
   fmt.Println(c)
   fmt.Println(c.Scale())

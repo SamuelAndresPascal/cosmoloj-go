@@ -4,6 +4,20 @@ import (
 "math"
 )
 
+var identity UnitConverter = createIdentity()
+
+func createIdentity() UnitConverter {
+  var i = new(UnitConverterImpl)
+  i.scale = 1.
+  i.offset = 0.
+  i.inverse = i
+  return i
+}
+
+func Identity() UnitConverter {
+  return identity
+}
+
 type UnitConverter interface {
   Scale() float64
   Offset() float64
@@ -223,7 +237,7 @@ func (x *DerivedUnitImpl) Definition() []Factor {
 }
 
 func (x *DerivedUnitImpl) ToBase() UnitConverter {
-  var transform = NewUnitConverter(1, 0)
+  var transform = Identity()
   for _, factor := range x.definition {
     transform = factor.Dim().ToBase().LinearPow(factor.Power()).Concatenate(transform) 
   }
