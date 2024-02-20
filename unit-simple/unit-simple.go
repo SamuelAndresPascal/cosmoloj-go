@@ -91,6 +91,9 @@ type FundamentalUnitImpl struct {
 func NewFundamentalUnit() FundamentalUnit {
   var result = new(FundamentalUnitImpl)
   result.this = result
+  result.unit = result.this
+  result.numerator = 1
+  result.denominator = 1
   return result
 }
 
@@ -103,6 +106,9 @@ type TransformedUnitImpl struct {
 func NewTransformedUnit(toReference UnitConverter, reference Unit) TransformedUnit {
   var result = new(TransformedUnitImpl)
   result.this = result
+  result.unit = result.this
+  result.numerator = 1
+  result.denominator = 1
   result.toReference = toReference
   result.reference = reference
   return result
@@ -116,6 +122,9 @@ type DerivedUnitImpl struct {
 func NewDerivedUnit(definition []Factor) DerivedUnit {
   var result = new(DerivedUnitImpl)
   result.this = result
+  result.unit = result.this
+  result.numerator = 1
+  result.denominator = 1
   result.definition = definition
   return result
 }
