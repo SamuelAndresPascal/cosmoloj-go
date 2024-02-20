@@ -29,7 +29,7 @@ type Unit interface {
   Shift(value float64) Unit
   ScaleMultiply(value float64) Unit
   ScaleDivide(value float64) Unit
-  Factor(numerator int32, denominator int32) Factor
+  Factor(numeratorAndDenominator ...int32) Factor
 }
 
 type FundamentalUnit interface {
@@ -75,8 +75,12 @@ type FactorImpl struct {
   denominator int32
 }
 
-func NewFactor(unit Unit, numerator int32, denominator int32) Factor {
-  return &FactorImpl{unit, numerator, denominator}
+func NewFactor(unit Unit, numeratorAndDenominator ...int32) Factor {
+  var denominator int32 = 1
+  if len(numeratorAndDenominator) > 1 {
+    denominator = numeratorAndDenominator[1]
+  }
+  return &FactorImpl{unit, numeratorAndDenominator[0], denominator}
 }
 
 type UnitImpl struct {
@@ -195,8 +199,8 @@ func (x *UnitImpl) ScaleDivide(value float64) Unit {
   return x.ScaleMultiply(1 / value)
 }
 
-func (x *UnitImpl) Factor(numerator int32, denominator int32) Factor {
-  return NewFactor(x.this, numerator, denominator)
+func (x *UnitImpl) Factor(numeratorAndDenominator ...int32) Factor {
+  return NewFactor(x.this, numeratorAndDenominator...)
 }
 
 func (x *FundamentalUnitImpl) ToBase() UnitConverter {
