@@ -86,3 +86,54 @@ func TestCombinedDimensionDerived(t *testing.T) {
   }
 }
 
+func TestTemperatures(t *testing.T) {
+
+  var k Unit = NewFundamentalUnit()
+  var c Unit = k.Shift(273.15)
+  var kToC UnitConverter = k.GetConverterTo(c)
+
+  if math.Abs(-273.15 - kToC.Convert(0.)) > 1e-10 {
+    t.Fatal()
+  }
+  
+  if math.Abs(273.15 - kToC.Inverse().Convert(0.)) > 1e-10 {
+    t.Fatal()
+  }
+  
+  // en combinaison avec d'autres unites, les conversions d'unites de temperatures doivent devenir lineaires
+  var m Unit = NewFundamentalUnit()
+  var cPerM Unit = NewDerivedUnit([]Factor{c, m.Factor(-1, 1)})
+  var kPerM Unit = NewDerivedUnit([]Factor{k, m.Factor(-1, 1)})
+  var kPerMToCPerM UnitConverter = kPerM.GetConverterTo(cPerM)
+  
+  if math.Abs(3. - kPerMToCPerM.Convert(3.)) > 1e-10 {
+    t.Fatal()
+  }
+  
+  if math.Abs(3. - kPerMToCPerM.Inverse().Convert(3.)) > 1e-10 {
+    t.Fatal()
+  }
+}
+
+func TestSpeed(t *testing.T) {
+
+  var m Unit = NewFundamentalUnit()
+  var km Unit = m.ScaleMultiply(1000.)
+  
+  var s Unit = NewFundamentalUnit()
+  var h Unit = s.ScaleMultiply(3600.)
+  
+  var mPerS Unit = NewDerivedUnit([]Factor{m, s.Factor(-1, 1)})
+  var kMPerH Unit = NewDerivedUnit([]Factor{km, h.Factor(-1, 1)})
+  
+  var mPerSToKMPerH UnitConverter = mPerS.GetConverterTo(kMPerH)
+  
+  if math.Abs(360. - mPerSToKMPerH.Convert(100.)) > 1e-10 {
+    t.Fatal()
+  }
+  
+  if math.Abs(5. - mPerSToKMPerH.Inverse().Convert(18.)) > 1e-10 {
+    t.Fatal()
+  }
+}
+
