@@ -44,6 +44,7 @@ type TransformedUnit interface {
 
 type DerivedUnit interface {
   Unit
+  Definition() []Factor
 }
 
 type UnitConverterImpl struct {
@@ -101,14 +102,22 @@ type TransformedUnitImpl struct {
 
 func NewTransformedUnit(toReference UnitConverter, reference Unit) TransformedUnit {
   var result = new(TransformedUnitImpl)
-  result.toReference = toReference
   result.this = result
+  result.toReference = toReference
   result.reference = reference
   return result
 }
 
 type DerivedUnitImpl struct {
   UnitImpl
+  definition []Factor
+}
+
+func NewDerivedUnit(definition []Factor) DerivedUnit {
+  var result = new(DerivedUnitImpl)
+  result.this = result
+  result.definition = definition
+  return result
 }
 
 func (x *UnitConverterImpl) Scale() float64 {
@@ -195,6 +204,18 @@ func (x *TransformedUnitImpl) ToReference() UnitConverter {
 
 func (x *TransformedUnitImpl) Reference() Unit {
   return x.reference
+}
+
+func (x *DerivedUnitImpl) Definition() []Factor {
+  return x.definition
+}
+
+func (x *DerivedUnitImpl) ToBase() UnitConverter {
+  var transform = NewUnitConverter(1, 0)
+  for _, factor := range x.definition {
+    transform = factor.Dim().ToBase().LinearPow(factor.Power()).Concatenate(transform) 
+  }
+  return transform
 }
   
 func main() {
