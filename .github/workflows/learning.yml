@@ -16,6 +16,6 @@ jobs:
       - run: go version
       - working-directory: learning/hello
         run: |
-        go mod tidy
-        go run hello.go
-        go run hola.go
+          go mod tidy
+          go run hello.go
+          go run hola.go
