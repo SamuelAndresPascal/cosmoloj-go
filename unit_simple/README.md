@@ -1,5 +1,7 @@
 # Simple Unit (implémentation Go)
 
+[![example workflow](https://github.com/SamuelAndresPascal/cosmoloj-go/actions/workflows/unit_simple.yml/badge.svg)](https://github.com/SamuelAndresPascal/cosmoloj-go/actions)
+
 
 ## Utilisation
 
