@@ -1,0 +1,21 @@
+name: learning
+run-name: ${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '30 5 * * 0'
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: go version
+      - working-directory: learning/hello
+        run: |
+        go mod tidy
+        go run hello.go
+        go run hola.go
